@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 
 from flask import Flask, render_template, request, redirect, jsonify, url_for
 from flask import make_response, flash
