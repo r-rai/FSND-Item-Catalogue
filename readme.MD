@@ -30,3 +30,8 @@ python application.py
 # this application will run in python 2.7. this is not compatible for python3
 
 #Flask application navigations are provided in screenshots.pdf attached here
+
+#Comments
+|CRITERIA  | MEETS SPECIFICATIONS                     |
+|----------|------------------------------------------|
+|Are comments present and effectively explain longer code procedures?|Comments are present and effectively explain longer code procedures.|
