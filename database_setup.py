@@ -45,5 +45,5 @@ class Item(Base):
         }
 
 
-engine = create_engine('sqlite:///catalog.db',poolclass=SingletonThreadPool)
+engine = create_engine('sqlite:///catalog.db', poolclass=SingletonThreadPool)
 Base.metadata.create_all(engine)
