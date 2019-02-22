@@ -9,9 +9,14 @@
 <body>
 	<body style="background-image:url(/static/bg.jpg)">
   <a href="/catalogue" class="main-title"><h1>Udacity: Item Catalog</h1></a>
-    ---<a href="{{url_for('showLogin')}}">
+    ---
+    {% if not session.username %}
+        <h6><a href="{{url_for('showLogin')}}">
 			<span class="glyphicon glyphicon-user" aria-hidden="true"></span>Login Here
-		</a> | <a href="/gdisconnect">Logout</a>---
+		</a> </h6>
+    {% else %}
+    <h6><a href="/gdisconnect">Logout</a></h6>
+    {% endif %}  ---
 
 	{% with messages = get_flashed_messages() %}
     {% if messages %}

@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.pool import SingletonThreadPool
 from sqlalchemy.orm import sessionmaker
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
-from database_setup import Base, Catalogue, Item
+from database_setup import Base, Catalogue, Item, User
 import httplib2
 import json
 import requests
@@ -106,6 +106,19 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
+    print data['email']
+    if session.query(User).filter_by(email=data['email']).count() != 0:
+        current_user = session.query(User).filter_by(email=data['email']).one()
+    else:
+        newUser = User(name=data['name'],
+                       email=data['email'])
+        session.add(newUser)
+        session.commit()
+        current_user = newUser
+
+    login_session['user_id'] = current_user.id
+    print current_user.id
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -168,8 +181,11 @@ def newCatalogue():
     """Add new Catalogue"""
     if 'username' not in login_session:
         return redirect('/login')
+
+    user_id = login_session['user_id']
+
     if request.method == 'POST':
-        newCatalogue = Catalogue(name=request.form['name'])
+        newCatalogue = Catalogue(name=request.form['name'], user_id=user_id)
         session.add(newCatalogue)
         flash('New Catalogue %s Successfully Created' % newCatalogue.name)
         session.commit()
@@ -183,7 +199,16 @@ def editCatalogue(catalogue_id):
     """Edit Catalogue"""
     if 'username' not in login_session:
         return redirect('/login')
+
+        user_id = login_session['user_id']
+
     theCatalogue = session.query(Catalogue).filter_by(id=catalogue_id).one()
+
+    if catalogue.user_id != login_session['user_id']:
+        flash("""Catalogue was created by another user and can only
+                be edited by creator""")
+        return redirect(url_for('showCatalogue'))
+
     if request.method == 'POST':
         if request.form['name']:
             theCatalogue.name = request.form['name']
@@ -199,6 +224,12 @@ def deleteCatalogue(catalogue_id):
     if 'username' not in login_session:
         return redirect('/login')
     theCatalogue = session.query(Catalogue).filter_by(id=catalogue_id).one()
+
+    if catalogue.user_id != login_session['user_id']:
+        flash("""Catalogue was created by another user and can only be
+        deleted by creator""")
+        return redirect(url_for('showCatalogue'))
+
     if request.method == 'POST':
         session.delete(theCatalogue)
         flash('%s Successfully Deleted' % theCatalogue.name)
@@ -223,10 +254,14 @@ def newItem(catalogue_id):
     """Add new Item"""
     if 'username' not in login_session:
         return redirect('/login')
+
+        user_id = login_session['user_id']
+
     if request.method == 'POST':
         newItem = Item(name=request.form['name'],
                        description=request.form['description'],
-                       catalogue_id=catalogue_id)
+                       catalogue_id=catalogue_id,
+                       user_id=user_id)
         session.add(newItem)
         session.commit()
         flash('%s Successfully Created' % (newItem.name))
@@ -244,6 +279,12 @@ def editItem(catalogue_id, item_id):
     if 'username' not in login_session:
         return redirect('/login')
     theItem = session.query(Item).filter_by(id=item_id).one()
+
+    if item.user_id != login_session['user_id']:
+        flash("""Item was created by another user and can only be
+        edited by creator""")
+        return redirect(url_for('showItem', catalogue_id=catalogue_id))
+
     if request.method == 'POST':
         if request.form['name']:
             theItem.name = request.form['name']
@@ -267,6 +308,12 @@ def deleteItem(catalogue_id, item_id):
     if 'username' not in login_session:
         return redirect('/login')
     theItem = session.query(Item).filter_by(id=item_id).one()
+
+    if item.user_id != login_session['user_id']:
+        flash("""Item was created by another user and can only be
+        deleted by creator""")
+        return redirect(url_for('showItem', category_id=category_id))
+
     if request.method == 'POST':
         session.delete(theItem)
         session.commit()

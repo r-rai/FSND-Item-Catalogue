@@ -4,11 +4,28 @@ import os
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.pool import SingletonThreadPool
 from sqlalchemy import create_engine
 
 Base = declarative_base()
+
+
+class User(Base):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(250), nullable=False, unique=True)
+    name = Column(String(250))
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'email': self.email,
+            'name': self.name,
+            'id': self.id,
+        }
 
 
 class Catalogue(Base):
@@ -16,6 +33,8 @@ class Catalogue(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -23,6 +42,7 @@ class Catalogue(Base):
         return {
             'name': self.name,
             'id': self.id,
+            'user_id': self.user_id,
         }
 
 
@@ -34,6 +54,9 @@ class Item(Base):
     description = Column(String(250))
     catalogue_id = Column(Integer, ForeignKey('catalogue.id'))
     catalogue = relationship(Catalogue)
+    catalogue = relationship("Catalogue",
+                             backref=backref("items",
+                                             cascade="all,delete-orphan"))
 
     @property
     def serialize(self):
@@ -42,7 +65,8 @@ class Item(Base):
             'name': self.name,
             'description': self.description,
             'id': self.id,
-        }
+            'user_id': self.user_id,
+            }
 
 
 engine = create_engine('sqlite:///catalog.db', poolclass=SingletonThreadPool)
