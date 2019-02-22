@@ -32,6 +32,11 @@ python application.py
 #Flask application navigations are provided in screenshots.pdf attached here
 
 #Comments
-|CRITERIA  | MEETS SPECIFICATIONS                     |
-|----------|------------------------------------------|
+
+
+|CRITERIA | MEETS SPECIFICATIONS|
+|----------|---------------------|
 |Are comments present and effectively explain longer code procedures?|Comments are present and effectively explain longer code procedures.|
+
+
+# This porject confirms criteria defined here https://review.udacity.com/#!/rubrics/2008/view
