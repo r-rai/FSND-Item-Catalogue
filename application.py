@@ -200,7 +200,7 @@ def editCatalogue(catalogue_id):
     if 'username' not in login_session:
         return redirect('/login')
 
-        user_id = login_session['user_id']
+    user_id = login_session['user_id']
 
     theCatalogue = session.query(Catalogue).filter_by(id=catalogue_id).one()
 
@@ -255,7 +255,7 @@ def newItem(catalogue_id):
     if 'username' not in login_session:
         return redirect('/login')
 
-        user_id = login_session['user_id']
+    user_id = login_session['user_id']
 
     if request.method == 'POST':
         newItem = Item(name=request.form['name'],

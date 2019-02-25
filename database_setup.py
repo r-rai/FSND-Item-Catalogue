@@ -57,6 +57,8 @@ class Item(Base):
     catalogue = relationship("Catalogue",
                              backref=backref("items",
                                              cascade="all,delete-orphan"))
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user = relationship(User)
 
     @property
     def serialize(self):
