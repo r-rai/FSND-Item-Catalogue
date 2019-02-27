@@ -53,7 +53,6 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     description = Column(String(250))
     catalogue_id = Column(Integer, ForeignKey('catalogue.id'))
-    catalogue = relationship(Catalogue)
     catalogue = relationship("Catalogue",
                              backref=backref("items",
                                              cascade="all,delete-orphan"))

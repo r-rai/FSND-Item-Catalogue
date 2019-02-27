@@ -204,7 +204,7 @@ def editCatalogue(catalogue_id):
 
     theCatalogue = session.query(Catalogue).filter_by(id=catalogue_id).one()
 
-    if catalogue.user_id != login_session['user_id']:
+    if theCatalogue.user_id != login_session['user_id']:
         flash("""Catalogue was created by another user and can only
                 be edited by creator""")
         return redirect(url_for('showCatalogue'))
@@ -225,7 +225,7 @@ def deleteCatalogue(catalogue_id):
         return redirect('/login')
     theCatalogue = session.query(Catalogue).filter_by(id=catalogue_id).one()
 
-    if catalogue.user_id != login_session['user_id']:
+    if theCatalogue.user_id != login_session['user_id']:
         flash("""Catalogue was created by another user and can only be
         deleted by creator""")
         return redirect(url_for('showCatalogue'))
@@ -280,7 +280,7 @@ def editItem(catalogue_id, item_id):
         return redirect('/login')
     theItem = session.query(Item).filter_by(id=item_id).one()
 
-    if item.user_id != login_session['user_id']:
+    if theItem.user_id != login_session['user_id']:
         flash("""Item was created by another user and can only be
         edited by creator""")
         return redirect(url_for('showItem', catalogue_id=catalogue_id))
@@ -309,7 +309,7 @@ def deleteItem(catalogue_id, item_id):
         return redirect('/login')
     theItem = session.query(Item).filter_by(id=item_id).one()
 
-    if item.user_id != login_session['user_id']:
+    if theItem.user_id != login_session['user_id']:
         flash("""Item was created by another user and can only be
         deleted by creator""")
         return redirect(url_for('showItem', category_id=category_id))
